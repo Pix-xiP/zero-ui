@@ -12,6 +12,8 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
+import { validateIP } from "utils/IP";
+
 import DataTable from "react-data-table-component";
 
 function DNS({ dns, handleChange }) {
@@ -31,9 +33,14 @@ function DNS({ dns, handleChange }) {
     let data = {};
 
     data["domain"] = domain;
+    data["servers"] = [];
     let trimmed = servers.trim();
     let splits = trimmed.split(",");
-    data["servers"] = splits;
+    for (let i = 0; i < splits.length; i++) {
+      if (validateIP(splits[i])) {
+        data["servers"].push(splits[i]);
+      }
+    }
 
     handleChange("config", "dns", "custom", data)(null);
 

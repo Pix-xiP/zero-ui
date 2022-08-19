@@ -17,7 +17,7 @@ import DataTable from "react-data-table-component";
 function DNS({ dns, handleChange }) {
   const [domain, setDomain] = useState("");
 
-  const [server, setServer] = useState("");
+  const [servers, setServer] = useState("");
 
   const handleDnsInput = (event) => {
     setDomain(event.target.value);
@@ -29,12 +29,11 @@ function DNS({ dns, handleChange }) {
 
   const addDnsServer = () => {
     let data = {};
-    data["domain"] = domain;
-    
-    data["server"] = [server];
 
-    let newDns = [...dns];
-    newDns.push(data);
+    data["domain"] = domain;
+    let trimmed = servers.trim();
+    let splits = trimmed.split(",");
+    data["servers"] = splits;
 
     handleChange("config", "dns", "custom", data)(null);
 
@@ -43,10 +42,11 @@ function DNS({ dns, handleChange }) {
   };
 
   const removeDnsServer = (index) => {
-    let newDns = [...dns];
-    newDns.splice(index, 1);
+    let data = {};
+    data["domain"] = "";
+    data["servers"] = [];
 
-    handleChange("config", "dns", "custom", newDns)(null);
+    handleChange("config", "dns", "custom", data)(null);
   };
 
   const columns = [
@@ -71,7 +71,13 @@ function DNS({ dns, handleChange }) {
     {
       id: "servers",
       name: "Servers",
-      cell: (row) => (row["servers"] ? row["servers"] : "(LAN)"),
+      cell: (row) => (
+          <div>
+            {row["servers"]?.map((server, i) => (
+              <div key={i}>{server}</div>
+              ))}
+          </div>
+        )
     },
   ];
 
@@ -84,7 +90,7 @@ function DNS({ dns, handleChange }) {
         <Grid item style={{ margin: "10px" }}>
           <DataTable noHeader={true} columns={columns} data={[dns]} />
           <Divider />
-          <Typography>Add DNS Server</Typography>
+          <Typography>Add DNS</Typography>
           <List
             style={{
               display: "flex",
@@ -104,9 +110,9 @@ function DNS({ dns, handleChange }) {
               flexItem
             />
             <TextField
-              value={server}
+              value={servers}
               onChange={handleServerInput}
-              placeholder={"Server Address"}
+              placeholder={"1.1.1.1,8.8.8.8"}
             />
             <IconButton size="small" color="primary" onClick={addDnsServer}>
               <AddIcon

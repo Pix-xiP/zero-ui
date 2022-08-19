@@ -13,6 +13,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import ManagedRoutes from "./components/ManagedRoutes";
 import IPv4AutoAssign from "./components/IPv4AutoAssign";
+import DNS from "./components/Dns";
 
 import API from "utils/API";
 import { parseValue, replaceValue, setValue } from "utils/ChangeHelper";
@@ -39,6 +40,13 @@ function NetworkSettings({ network, setNetwork }) {
 
       sendReq(data);
     };
+
+  const handleDnsChange =
+    (key1, key2, key3, mode = "text", additionalData = null) => (event) => {
+      const value = parseValue(event, mode, additionalData);
+
+
+    }
 
   return (
     <Accordion>
@@ -129,9 +137,14 @@ function NetworkSettings({ network, setNetwork }) {
             <span>Enable Broadcast</span>
           </Grid>
           {/* TODO: */}
-          {/* <Grid item>
-            <Typography>DNS</Typography>
-          </Grid> */}
+          <Divider />
+           <Grid item>
+             <DNS 
+                dns={network["config"]["dns"]}
+                handleChange={handleChange}
+              />
+          </Grid> 
+
         </Grid>
       </AccordionDetails>
     </Accordion>
